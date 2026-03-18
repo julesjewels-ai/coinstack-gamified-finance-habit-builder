@@ -1,0 +1,1 @@
+"""\nCoinstack test package.\n"""\n

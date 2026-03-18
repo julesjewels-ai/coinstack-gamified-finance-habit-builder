@@ -1,0 +1,1 @@
+"""\nCoinstack core application package.\n"""\n
