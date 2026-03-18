@@ -1,1 +1,3 @@
-"""\nCoinstack core logic package.\n"""\n
+"""
+Coinstack core logic package.
+"""

@@ -1,1 +1,36 @@
-"""\nUnit tests for the Coinstack core application logic.\n"""\n\nfrom src.core.app import App\nimport pytest\n\ndef test_app_initialization() -> None:\n    """\n    Tests that the App class can be instantiated correctly.\n    """\n    app = App()\n    assert app is not None\n    assert app.debug_mode is False\n    assert app.version == "0.1.0"\n\ndef test_app_initialization_with_debug_mode() -> None:\n    """\n    Tests that the App class can be instantiated with debug mode enabled.\n    """\n    app = App(debug_mode=True)\n    assert app.debug_mode is True\n\ndef test_app_run_method_completes_without_error(capsys: pytest.CaptureFixture) -> None:\n    """\n    Tests that the run method executes without raising exceptions.\n    It should print specific messages to stdout.\n    """\n    app = App()\n    app.run()\n    captured = capsys.readouterr()\n    assert "Coinstack App (v0.1.0) initializing..." in captured.out\n    assert "Coinstack App initialization complete." in captured.out\n    assert "Coinstack App is running!" in captured.out\n    assert "Application finished its primary task (MVP simulation)." in captured.out\n    assert captured.err == ""\n
+"""
+Unit tests for the Coinstack core application logic.
+"""
+
+from src.core.app import App
+import pytest
+
+def test_app_initialization() -> None:
+    """
+    Tests that the App class can be instantiated correctly.
+    """
+    app = App()
+    assert app is not None
+    assert app.debug_mode is False
+    assert app.version == "0.1.0"
+
+def test_app_initialization_with_debug_mode() -> None:
+    """
+    Tests that the App class can be instantiated with debug mode enabled.
+    """
+    app = App(debug_mode=True)
+    assert app.debug_mode is True
+
+def test_app_run_method_completes_without_error(capsys: pytest.CaptureFixture) -> None:
+    """
+    Tests that the run method executes without raising exceptions.
+    It should print specific messages to stdout.
+    """
+    app = App()
+    app.run()
+    captured = capsys.readouterr()
+    assert "Coinstack App (v0.1.0) initializing..." in captured.out
+    assert "Coinstack App initialization complete." in captured.out
+    assert "Coinstack App is running!" in captured.out
+    assert "Application finished its primary task (MVP simulation)." in captured.out
+    assert captured.err == ""
