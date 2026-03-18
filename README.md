@@ -1,0 +1,55 @@
+# Coinstack - Gamified Finance Habit Builder
+
+A mobile finance application designed to help Gen Z build healthy money habits through daily, personalized, 3-minute challenges. It connects to the user's bank account, turning real transaction data into actionable challenges focused on spending awareness, saving triggers, and debt management. The app gamifies habit formation with streaks and builds a unique behavioral profile to track financial progress and identify spending patterns.
+
+## Tech Stack
+
+- Plaid API (for bank connectivity)
+- Mobile application framework (e.g., React Native, Flutter, iOS Swift/Kotlin Android)
+
+## Features
+
+- Bank account integration via Plaid for real transaction data
+- Daily 3-minute challenges personalized to user spending habits
+- Gamified progression with streaks and action-unlocked content
+- Behavioral profile tracking to map financial habit shifts
+- Initial library of 20 challenges covering spending, saving, and debt basics
+
+## Quick Start
+
+```bash
+# Clone and setup
+git clone <repo-url>
+cd coinstack---gamified-finance-habit-builder
+make install
+
+# Run the application
+make run
+```
+
+## Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+```bash
+make run
+```
+
+## Development
+
+```bash
+make install  # Create venv and install dependencies
+make run      # Run the application
+make test     # Run tests
+make clean    # Remove cache files
+```
+
+## Testing
+
+```bash
+pytest tests/ -v
+```
