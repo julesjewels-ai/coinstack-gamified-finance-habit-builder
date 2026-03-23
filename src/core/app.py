@@ -3,9 +3,12 @@ Core application logic for Coinstack.
 Handles the main business processes of the gamified finance habit builder.
 """
 
+from typing import Optional
+
 from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
+from src.core.config import settings
 import random
 
 class App:
@@ -17,14 +20,15 @@ class App:
     generating challenges, and tracking user progress.
     """
 
-    def __init__(self, debug_mode: bool = False) -> None:
+    def __init__(self, debug_mode: Optional[bool] = None) -> None:
         """
         Initializes the Coinstack application.
 
         Args:
-            debug_mode (bool): If True, enables debug logging and features.
+            debug_mode (Optional[bool]): If True, enables debug logging and features.
+                If None, falls back to the COINSTACK_DEBUG environment variable.
         """
-        self.debug_mode = debug_mode
+        self.debug_mode = debug_mode if debug_mode is not None else settings.DEBUG_MODE
         self.version = "0.1.0"
         self._initialized = False
 
