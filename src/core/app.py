@@ -8,6 +8,7 @@ from typing import Optional
 from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
+from src.services.plaid_service import PlaidService
 from src.core.config import settings
 import random
 
@@ -35,6 +36,18 @@ class App:
         # Core components
         self.challenge_library = ChallengeLibrary()
         self.bank_integration = BankIntegrationSimulator()
+
+        # Initialize Plaid service (to be fully integrated later)
+        try:
+            self.plaid_service = PlaidService(
+                client_id=settings.PLAID_CLIENT_ID,
+                secret=settings.PLAID_SECRET,
+                env=settings.PLAID_ENV
+            )
+        except Exception as e:
+            if self.debug_mode:
+                print(f"Warning: Could not initialize PlaidService: {e}")
+            self.plaid_service = None
 
         # Default user for MVP
         self.current_user = UserProfile(
