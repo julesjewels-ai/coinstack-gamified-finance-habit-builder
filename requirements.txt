@@ -1,2 +1,4 @@
 pytest
+
+plaid-python
 python-decouple

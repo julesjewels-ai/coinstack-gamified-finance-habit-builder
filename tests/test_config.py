@@ -15,15 +15,21 @@ def test_settings_defaults():
 
     settings = Settings()
     assert settings.DEBUG_MODE is False
-    assert settings.BANK_API_KEY == ""
     assert settings.DATABASE_URL == "sqlite:///./coinstack.db"
+    assert settings.PLAID_CLIENT_ID == ""
+    assert settings.PLAID_SECRET == ""
+    assert settings.PLAID_ENV == "sandbox"
 
 def test_settings_with_env_vars(monkeypatch):
     monkeypatch.setenv("COINSTACK_DEBUG", "True")
-    monkeypatch.setenv("BANK_API_KEY", "test_key")
+    monkeypatch.setenv("PLAID_CLIENT_ID", "test_id")
+    monkeypatch.setenv("PLAID_SECRET", "test_secret")
+    monkeypatch.setenv("PLAID_ENV", "production")
     monkeypatch.setenv("DATABASE_URL", "sqlite:///./test.db")
 
     settings = Settings()
     assert settings.DEBUG_MODE is True
-    assert settings.BANK_API_KEY == "test_key"
+    assert settings.PLAID_CLIENT_ID == "test_id"
+    assert settings.PLAID_SECRET == "test_secret"
+    assert settings.PLAID_ENV == "production"
     assert settings.DATABASE_URL == "sqlite:///./test.db"
