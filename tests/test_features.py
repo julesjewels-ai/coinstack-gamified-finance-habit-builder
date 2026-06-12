@@ -1,3 +1,4 @@
+from src.core.config import settings
 import pytest
 from datetime import datetime
 from src.core.models import Transaction, Challenge, BehavioralProfile, UserProfile
@@ -53,7 +54,7 @@ def test_challenge_library():
     assert c1.id == "c1"
 
 def test_app_core_logic():
-    app = App()
+    app = App(settings=settings)
     assert app.current_user is not None
 
     # Simulate setup
