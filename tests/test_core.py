@@ -5,11 +5,12 @@ Unit tests for the Coinstack core application logic.
 from src.core.app import App
 import pytest
 
-def test_app_initialization() -> None:
+def test_app_initialization(monkeypatch) -> None:
     """
     Tests that the App class can be instantiated correctly.
     """
-    app = App()
+    monkeypatch.delenv("COINSTACK_DEBUG", raising=False)
+    app = App(debug_mode=False)
     assert app is not None
     assert app.debug_mode is False
     assert app.version == "0.1.0"

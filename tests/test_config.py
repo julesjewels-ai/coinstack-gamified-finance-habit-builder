@@ -4,26 +4,34 @@ from src.core.config import Settings
 import tempfile
 import pytest
 
-def test_settings_defaults():
+import plaid
+
+def test_settings_defaults(monkeypatch):
     # Clear env vars that might affect this test
-    if "COINSTACK_DEBUG" in os.environ:
-        del os.environ["COINSTACK_DEBUG"]
-    if "BANK_API_KEY" in os.environ:
-        del os.environ["BANK_API_KEY"]
-    if "DATABASE_URL" in os.environ:
-        del os.environ["DATABASE_URL"]
+    monkeypatch.delenv("COINSTACK_DEBUG", raising=False)
+    monkeypatch.delenv("BANK_API_KEY", raising=False)
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("PLAID_CLIENT_ID", raising=False)
+    monkeypatch.delenv("PLAID_SECRET", raising=False)
+    monkeypatch.delenv("PLAID_ENV", raising=False)
 
     settings = Settings()
     assert settings.DEBUG_MODE is False
-    assert settings.BANK_API_KEY == ""
     assert settings.DATABASE_URL == "sqlite:///./coinstack.db"
+    assert settings.PLAID_CLIENT_ID == ""
+    assert settings.PLAID_SECRET == ""
+    assert settings.PLAID_ENV == plaid.Environment.Sandbox
 
 def test_settings_with_env_vars(monkeypatch):
     monkeypatch.setenv("COINSTACK_DEBUG", "True")
-    monkeypatch.setenv("BANK_API_KEY", "test_key")
     monkeypatch.setenv("DATABASE_URL", "sqlite:///./test.db")
+    monkeypatch.setenv("PLAID_CLIENT_ID", "test_plaid_client_id")
+    monkeypatch.setenv("PLAID_SECRET", "test_plaid_secret")
+    monkeypatch.setenv("PLAID_ENV", "production")
 
     settings = Settings()
     assert settings.DEBUG_MODE is True
-    assert settings.BANK_API_KEY == "test_key"
     assert settings.DATABASE_URL == "sqlite:///./test.db"
+    assert settings.PLAID_CLIENT_ID == "test_plaid_client_id"
+    assert settings.PLAID_SECRET == "test_plaid_secret"
+    assert settings.PLAID_ENV == plaid.Environment.Production
