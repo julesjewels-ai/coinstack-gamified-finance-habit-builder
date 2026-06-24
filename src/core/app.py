@@ -9,6 +9,7 @@ from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
 from src.core.config import settings
+from src.services.plaid_service import PlaidService
 import random
 
 class App:
@@ -52,6 +53,22 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        # Initialize Plaid API Client
+        if settings.PLAID_CLIENT_ID and settings.PLAID_SECRET:
+            try:
+                self.plaid_service = PlaidService(
+                    client_id=settings.PLAID_CLIENT_ID,
+                    secret=settings.PLAID_SECRET,
+                    environment=settings.PLAID_ENV
+                )
+                print(f"Plaid client initialized in {settings.PLAID_ENV} environment.")
+            except Exception as e:
+                print(f"Failed to initialize Plaid client: {e}")
+                self.plaid_service = None
+        else:
+            print("Plaid credentials not fully configured. Skipping Plaid initialization.")
+            self.plaid_service = None
 
         self._initialized = True
         print("Coinstack App initialization complete.")
