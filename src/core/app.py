@@ -8,6 +8,7 @@ from typing import Optional
 from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
+from src.services.plaid_service import PlaidService
 from src.core.config import settings
 import random
 
@@ -52,6 +53,12 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        self.plaid_service = PlaidService(
+            client_id=settings.PLAID_CLIENT_ID,
+            secret=settings.PLAID_SECRET,
+            environment=settings.PLAID_ENV
+        )
 
         self._initialized = True
         print("Coinstack App initialization complete.")
