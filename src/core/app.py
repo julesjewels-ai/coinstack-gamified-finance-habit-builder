@@ -8,7 +8,8 @@ from typing import Optional
 from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
-from src.core.config import settings
+from src.core.config import Settings
+from src.services.plaid_service import PlaidService
 import random
 
 class App:
@@ -20,15 +21,17 @@ class App:
     generating challenges, and tracking user progress.
     """
 
-    def __init__(self, debug_mode: Optional[bool] = None) -> None:
+    def __init__(self, settings: Settings, debug_mode: Optional[bool] = None) -> None:
         """
         Initializes the Coinstack application.
 
         Args:
+            settings (Settings): The application settings object.
             debug_mode (Optional[bool]): If True, enables debug logging and features.
                 If None, falls back to the COINSTACK_DEBUG environment variable.
         """
-        self.debug_mode = debug_mode if debug_mode is not None else settings.DEBUG_MODE
+        self.settings = settings
+        self.debug_mode = debug_mode if debug_mode is not None else self.settings.DEBUG_MODE
         self.version = "0.1.0"
         self._initialized = False
 
@@ -52,6 +55,18 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        if self.settings.PLAID_CLIENT_ID and self.settings.PLAID_SECRET:
+            self.plaid_service = PlaidService(
+                client_id=self.settings.PLAID_CLIENT_ID,
+                secret=self.settings.PLAID_SECRET,
+                environment=self.settings.PLAID_ENV
+            )
+            print("Plaid client initialized successfully.")
+        else:
+            self.plaid_service = None
+            if self.debug_mode:
+                print("Skipping Plaid initialization (missing credentials).")
 
         self._initialized = True
         print("Coinstack App initialization complete.")
