@@ -9,6 +9,7 @@ from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
 from src.core.config import settings
+from src.services.plaid_service import PlaidService
 import random
 
 class App:
@@ -35,6 +36,7 @@ class App:
         # Core components
         self.challenge_library = ChallengeLibrary()
         self.bank_integration = BankIntegrationSimulator()
+        self.plaid_service = None
 
         # Default user for MVP
         self.current_user = UserProfile(
@@ -52,6 +54,18 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        # Initialize Plaid API Client
+        self.plaid_service = PlaidService(
+            client_id=settings.PLAID_CLIENT_ID,
+            secret=settings.PLAID_SECRET,
+            environment=settings.PLAID_ENV
+        )
+
+        if self.plaid_service.is_connected():
+            print("Plaid API client initialized successfully.")
+        else:
+            print("Warning: Plaid API client failed to initialize.")
 
         self._initialized = True
         print("Coinstack App initialization complete.")
