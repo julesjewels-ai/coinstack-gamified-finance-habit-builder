@@ -23,7 +23,14 @@ def test_settings_with_env_vars(monkeypatch):
     monkeypatch.setenv("BANK_API_KEY", "test_key")
     monkeypatch.setenv("DATABASE_URL", "sqlite:///./test.db")
 
+    monkeypatch.setenv("PLAID_CLIENT_ID", "test_plaid_client")
+    monkeypatch.setenv("PLAID_SECRET", "test_plaid_secret")
+    monkeypatch.setenv("PLAID_ENV", "production")
+
     settings = Settings()
     assert settings.DEBUG_MODE is True
     assert settings.BANK_API_KEY == "test_key"
     assert settings.DATABASE_URL == "sqlite:///./test.db"
+    assert settings.PLAID_CLIENT_ID == "test_plaid_client"
+    assert settings.PLAID_SECRET == "test_plaid_secret"
+    assert settings.PLAID_ENV == "production"
