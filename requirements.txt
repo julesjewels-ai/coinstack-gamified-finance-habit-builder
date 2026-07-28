@@ -1,2 +1,2 @@
 pytest
-python-decouple
+python-decoupleplaid-python

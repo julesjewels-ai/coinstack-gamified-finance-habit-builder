@@ -53,7 +53,8 @@ def test_challenge_library():
     assert c1.id == "c1"
 
 def test_app_core_logic():
-    app = App()
+    from src.core.config import settings
+    app = App(settings=settings)
     assert app.current_user is not None
 
     # Simulate setup
