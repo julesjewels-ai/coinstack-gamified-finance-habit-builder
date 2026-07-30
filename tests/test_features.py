@@ -4,6 +4,7 @@ from src.core.models import Transaction, Challenge, BehavioralProfile, UserProfi
 from src.core.bank_integration import BankIntegrationSimulator
 from src.core.challenge_library import ChallengeLibrary
 from src.core.app import App
+from src.core.config import settings
 
 def test_models():
     txn = Transaction(id="1", amount=10.5, merchant_name="Starbucks", category="Food & Drink", date=datetime.now())
@@ -52,8 +53,9 @@ def test_challenge_library():
     assert c1 is not None
     assert c1.id == "c1"
 
+
 def test_app_core_logic():
-    app = App()
+    app = App(settings=settings)
     assert app.current_user is not None
 
     # Simulate setup
