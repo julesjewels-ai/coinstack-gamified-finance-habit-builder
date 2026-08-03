@@ -1,4 +1,5 @@
 import pytest
+from src.core.config import settings
 from datetime import datetime
 from src.core.models import Transaction, Challenge, BehavioralProfile, UserProfile
 from src.core.bank_integration import BankIntegrationSimulator
@@ -53,7 +54,7 @@ def test_challenge_library():
     assert c1.id == "c1"
 
 def test_app_core_logic():
-    app = App()
+    app = App(app_settings=settings)
     assert app.current_user is not None
 
     # Simulate setup
