@@ -1,3 +1,4 @@
+from src.core.config import settings
 """
 Unit tests for the Coinstack core application logic.
 """
@@ -9,7 +10,7 @@ def test_app_initialization() -> None:
     """
     Tests that the App class can be instantiated correctly.
     """
-    app = App()
+    app = App(app_settings=settings)
     assert app is not None
     assert app.debug_mode is False
     assert app.version == "0.1.0"
@@ -18,7 +19,7 @@ def test_app_initialization_with_debug_mode() -> None:
     """
     Tests that the App class can be instantiated with debug mode enabled.
     """
-    app = App(debug_mode=True)
+    app = App(debug_mode=True, app_settings=settings)
     assert app.debug_mode is True
 
 def test_app_run_method_completes_without_error(capsys: pytest.CaptureFixture) -> None:
@@ -26,7 +27,7 @@ def test_app_run_method_completes_without_error(capsys: pytest.CaptureFixture) -
     Tests that the run method executes without raising exceptions.
     It should print specific messages to stdout.
     """
-    app = App()
+    app = App(app_settings=settings)
     app.run()
     captured = capsys.readouterr()
     assert "Coinstack App (v0.1.0) initializing..." in captured.out
