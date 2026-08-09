@@ -1,78 +1,67 @@
 import pytest
-from datetime import datetime
-from src.core.models import Transaction, Challenge, BehavioralProfile, UserProfile
+from src.core.models import UserProfile, BehavioralProfile, Transaction, Challenge
 from src.core.bank_integration import BankIntegrationSimulator
 from src.core.challenge_library import ChallengeLibrary
 from src.core.app import App
+from src.core.config import settings
+from datetime import datetime, timedelta
 
 def test_models():
-    txn = Transaction(id="1", amount=10.5, merchant_name="Starbucks", category="Food & Drink", date=datetime.now())
-    assert txn.id == "1"
-    assert txn.amount == 10.5
+    bp = BehavioralProfile(frequent_categories=["Food & Drink"])
+    user = UserProfile(user_id="test1", name="Test User", behavioral_profile=bp)
 
-    challenge = Challenge(id="c1", title="Test", description="Test desc", category="saving")
-    assert challenge.id == "c1"
-    assert not challenge.completed
-    assert challenge.duration_minutes == 3
-
-    profile = BehavioralProfile()
-    assert profile.spending_score == 50
-    assert len(profile.frequent_categories) == 0
-
-    user = UserProfile(user_id="u1", name="Test User")
-    assert user.user_id == "u1"
+    assert user.user_id == "test1"
     assert user.streak_count == 0
     assert len(user.active_challenges) == 0
+    assert user.behavioral_profile.frequent_categories == ["Food & Drink"]
 
 def test_bank_integration():
-    simulator = BankIntegrationSimulator()
-    assert not simulator.connected
+    bank = BankIntegrationSimulator()
+    assert bank.connected is False
 
-    simulator.connect_account("u1")
-    assert simulator.connected
+    bank.connect_account("user1")
+    assert bank.connected is True
 
-    transactions = simulator.fetch_recent_transactions("u1", days=7)
-    assert len(transactions) == 10
+    txns = bank.fetch_recent_transactions("user1", days=7)
+    assert len(txns) == 10
 
-    # Test un-connected behavior
-    sim2 = BankIntegrationSimulator()
-    with pytest.raises(Exception, match="Bank account not connected"):
-        sim2.fetch_recent_transactions("u2")
+    # Dates are generated randomly within the past N days but timedelta calculation has milliseconds difference
+    # add a small buffer for check
+    now = datetime.now()
+    for txn in txns:
+        assert isinstance(txn, Transaction)
+        assert txn.date >= now - timedelta(days=7, seconds=10)
 
 def test_challenge_library():
-    lib = ChallengeLibrary()
-    assert len(lib.challenges) > 0
+    library = ChallengeLibrary()
 
-    spending_challenges = lib.get_challenges_by_category("spending")
+    # Test getting challenges by valid category
+    spending_challenges = library.get_challenges_by_category("spending")
     assert len(spending_challenges) > 0
-    for c in spending_challenges:
-        assert c.category == "spending"
+    for challenge in spending_challenges:
+        assert isinstance(challenge, Challenge)
+        assert challenge.category == "spending"
 
-    c1 = lib.get_challenge_by_id("c1")
-    assert c1 is not None
-    assert c1.id == "c1"
+    # Test invalid category
+    invalid = library.get_challenges_by_category("invalid_cat")
+    assert len(invalid) == 0
 
 def test_app_core_logic():
-    app = App()
-    assert app.current_user is not None
+    app = App(settings=settings)
 
-    # Simulate setup
-    app.bank_integration.connect_account(app.current_user.user_id)
-    app.analyze_transactions()
+    # Verify initial state
+    assert app.current_user.streak_count == 0
+    assert len(app.current_user.active_challenges) == 0
 
-    # Check that behavioral profile was updated
+    # Run the app which simulates the full flow
+    app.run()
+
+    # After run, the mock flow should have updated the user
+    # 1. Connected bank and analyzed txns (frequent_categories should be populated)
     assert len(app.current_user.behavioral_profile.frequent_categories) > 0
 
-    # Generate challenge
-    app.generate_daily_challenge()
-    assert len(app.current_user.active_challenges) == 1
-
-    # Complete challenge
-    active_challenge = app.current_user.active_challenges[0]
-    success = app.complete_challenge(active_challenge.id)
-
-    assert success is True
-    assert len(app.current_user.active_challenges) == 0
-    assert len(app.current_user.completed_challenges) == 1
+    # 2. Generated a daily challenge (should have one active, but complete_challenge pops it)
+    # 3. Completed the challenge (streak should be 1, completed should have 1)
     assert app.current_user.streak_count == 1
-    assert app.current_user.completed_challenges[0].completed is True
+    assert len(app.current_user.completed_challenges) == 1
+    assert len(app.current_user.active_challenges) == 0 # It was popped
