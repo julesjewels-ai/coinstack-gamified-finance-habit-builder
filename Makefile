@@ -1,1 +1,38 @@
-.PHONY: install run test clean help\n\nVENV_DIR = .venv\nPYTHON = $(VENV_DIR)/bin/python3\nPIP = $(VENV_DIR)/bin/pip\n\nhelp:\n\t@echo "Available targets:"\n\t@echo "  install    - Create a virtual environment and install dependencies."\n\t@echo "  run        - Activate the virtual environment and run the main application."\n\t@echo "  test       - Activate the virtual environment and run tests with pytest."\n\t@echo "  clean      - Remove virtual environment, cache files, and build artifacts."\n\ninstall: $(VENV_DIR)/bin/activate\n\t@echo "Installing dependencies..."\n\t$(PIP) install -r requirements.txt\n\t@echo "Installation complete. Run 'make run' to start the application."\n\n$(VENV_DIR)/bin/activate:\n\t@echo "Creating virtual environment at $(VENV_DIR)..."\n\tpython3 -m venv $(VENV_DIR)\n\nrun: install\n\t@echo "Running Coinstack application..."\n\t$(PYTHON) main.py\n\ntest: install\n\t@echo "Running tests..."\n\t$(PYTHON) -m pytest tests/\n\nclean:\n\t@echo "Cleaning up..."\n\trm -rf $(VENV_DIR)\n\tfind . -type d -name "__pycache__" -exec rm -rf {} +\n\tfind . -type f -name "*.pyc" -delete\n\trm -f .pytest_cache/*\n\trm -rf .pytest_cache\n\t@echo "Cleanup complete."\n
+.PHONY: install run test clean help
+
+VENV_DIR = .venv
+PYTHON = $(VENV_DIR)/bin/python3
+PIP = $(VENV_DIR)/bin/pip
+
+help:
+	@echo "Available targets:"
+	@echo "  install    - Create a virtual environment and install dependencies."
+	@echo "  run        - Activate the virtual environment and run the main application."
+	@echo "  test       - Activate the virtual environment and run tests with pytest."
+	@echo "  clean      - Remove virtual environment, cache files, and build artifacts."
+
+install: $(VENV_DIR)/bin/activate
+	@echo "Installing dependencies..."
+	$(PIP) install -r requirements.txt
+	@echo "Installation complete. Run 'make run' to start the application."
+
+$(VENV_DIR)/bin/activate:
+	@echo "Creating virtual environment at $(VENV_DIR)..."
+	python3 -m venv $(VENV_DIR)
+
+run: install
+	@echo "Running Coinstack application..."
+	$(PYTHON) main.py
+
+test: install
+	@echo "Running tests..."
+	$(PYTHON) -m pytest tests/
+
+clean:
+	@echo "Cleaning up..."
+	rm -rf $(VENV_DIR)
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
+	rm -f .pytest_cache/*
+	rm -rf .pytest_cache
+	@echo "Cleanup complete."
