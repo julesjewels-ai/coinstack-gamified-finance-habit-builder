@@ -9,6 +9,7 @@ from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
 from src.core.config import settings
+from src.services.plaid_service import PlaidService
 import random
 
 class App:
@@ -20,15 +21,23 @@ class App:
     generating challenges, and tracking user progress.
     """
 
-    def __init__(self, debug_mode: Optional[bool] = None) -> None:
+    def __init__(self, debug_mode: Optional[bool] = None, plaid_service: Optional[PlaidService] = None) -> None:
         """
         Initializes the Coinstack application.
 
         Args:
             debug_mode (Optional[bool]): If True, enables debug logging and features.
                 If None, falls back to the COINSTACK_DEBUG environment variable.
+            plaid_service (Optional[PlaidService]): Injected Plaid service instance.
+                If None, it is created using environment settings.
         """
         self.debug_mode = debug_mode if debug_mode is not None else settings.DEBUG_MODE
+
+        self.plaid_service = plaid_service if plaid_service is not None else PlaidService(
+            client_id=settings.PLAID_CLIENT_ID,
+            secret=settings.PLAID_SECRET,
+            env=settings.PLAID_ENV
+        )
         self.version = "0.1.0"
         self._initialized = False
 
