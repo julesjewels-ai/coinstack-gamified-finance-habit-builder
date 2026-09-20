@@ -9,6 +9,7 @@ from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
 from src.core.config import settings
+from src.services.plaid_service import PlaidService
 import random
 
 class App:
@@ -20,17 +21,21 @@ class App:
     generating challenges, and tracking user progress.
     """
 
-    def __init__(self, debug_mode: Optional[bool] = None) -> None:
+    def __init__(self, debug_mode: Optional[bool] = None, plaid_service: Optional['PlaidService'] = None) -> None:
         """
         Initializes the Coinstack application.
 
         Args:
             debug_mode (Optional[bool]): If True, enables debug logging and features.
                 If None, falls back to the COINSTACK_DEBUG environment variable.
+            plaid_service (Optional[PlaidService]): Injected Plaid service.
         """
         self.debug_mode = debug_mode if debug_mode is not None else settings.DEBUG_MODE
         self.version = "0.1.0"
         self._initialized = False
+
+        # External Services
+        self.plaid_service = plaid_service
 
         # Core components
         self.challenge_library = ChallengeLibrary()
@@ -52,6 +57,22 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        # Initialize Plaid service if not injected
+        if not self.plaid_service:
+            if settings.PLAID_CLIENT_ID and settings.PLAID_SECRET:
+                try:
+                    self.plaid_service = PlaidService(
+                        client_id=settings.PLAID_CLIENT_ID,
+                        secret=settings.PLAID_SECRET,
+                        env=settings.PLAID_ENV
+                    )
+                    if self.debug_mode:
+                        print(f"Initialized Plaid API Service in {settings.PLAID_ENV} environment.")
+                except Exception as e:
+                    print(f"Warning: Failed to initialize Plaid Service: {e}")
+            elif self.debug_mode:
+                print("Warning: Plaid API credentials missing. Running without Plaid integration.")
 
         self._initialized = True
         print("Coinstack App initialization complete.")
