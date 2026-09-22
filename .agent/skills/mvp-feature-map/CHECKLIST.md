@@ -4,7 +4,7 @@
 
 ## Features
 
-- [ ] **P0** — **Project Environment Setup & Config Loading**
+- [x] **Skipped - Redundant Capability** — **Project Environment Setup & Config Loading**
   - *What*: Implement robust environment variable loading using `python-decouple` or similar in `src/core/app.py` and ensure `main.py` passes debug mode correctly. Update `.env.example` to reflect new required variables.
   - *Accept*: Application starts successfully with environment variables configured in .env.
   - *Accept*: DEBUG_MODE setting from .env is correctly reflected in App instance via `app.debug_mode`.
