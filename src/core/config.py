@@ -16,5 +16,8 @@ class Settings:
         self.DEBUG_MODE: bool = config("COINSTACK_DEBUG", default=False, cast=bool)
         self.BANK_API_KEY: str = config("BANK_API_KEY", default="")
         self.DATABASE_URL: str = config("DATABASE_URL", default="sqlite:///./coinstack.db")
+        self.PLAID_CLIENT_ID: str = config("PLAID_CLIENT_ID", default="")
+        self.PLAID_SECRET: str = config("PLAID_SECRET", default="")
+        self.PLAID_ENV: str = config("PLAID_ENV", default="sandbox")
 
 settings = Settings()
