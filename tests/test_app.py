@@ -28,3 +28,12 @@ def test_app_debug_mode_override():
 
     app2 = App(debug_mode=False)
     assert app2.debug_mode is False
+
+def test_app_plaid_service_injection():
+    class DummyPlaidService:
+        pass
+
+    dummy_service = DummyPlaidService()
+    # Ignoring type checking here since we are just testing dependency injection assignment
+    app = App(plaid_service=dummy_service) # type: ignore
+    assert app.plaid_service is dummy_service
