@@ -1,2 +1,37 @@
-"""Coinstack - Gamified Finance Habit Builder\nMain entry point for the application.\n"""\n\nimport argparse\nfrom src.core.app import App\nimport sys\n\ndef main() -> None:\n    """\n    Parses command-line arguments and runs the Coinstack application.\n    """\n    parser = argparse.ArgumentParser(\n        description="Coinstack: Gamified Finance Habit Builder for Gen Z.",\n        formatter_class=argparse.RawTextHelpFormatter\n    )\n    parser.add_argument(\n        "--version",\n        action="version",\n        version="%(prog)s 0.1.0",\n        help="Show program's version number and exit.\n        For example: python main.py --version"\n    )\n    parser.add_argument(\n        "--debug",\n        action="store_true",
-        default=None,\n        help="Enable debug mode for more verbose output.\n        For example: python main.py --debug"\n    )\n\n    args = parser.parse_args()\n\n    # Initialize and run the application\n    app = App(debug_mode=args.debug)\n    app.run()\n\nif __name__ == "__main__":\n    main()\n
+"""Coinstack - Gamified Finance Habit Builder
+Main entry point for the application.
+"""
+
+import argparse
+from src.core.app import App
+import sys
+
+def main() -> None:
+    """
+    Parses command-line arguments and runs the Coinstack application.
+    """
+    parser = argparse.ArgumentParser(
+        description="Coinstack: Gamified Finance Habit Builder for Gen Z.",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s 0.1.0",
+        help="Show program's version number and exit.\n        For example: python main.py --version"
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=None,
+        help="Enable debug mode for more verbose output.\n        For example: python main.py --debug"
+    )
+
+    args = parser.parse_args()
+
+    # Initialize and run the application
+    app = App(debug_mode=args.debug)
+    app.run()
+
+if __name__ == "__main__":
+    main()
