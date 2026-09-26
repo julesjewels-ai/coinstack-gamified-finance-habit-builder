@@ -8,6 +8,7 @@ from typing import Optional
 from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
+from src.services.plaid_service import PlaidService
 from src.core.config import settings
 import random
 
@@ -20,13 +21,15 @@ class App:
     generating challenges, and tracking user progress.
     """
 
-    def __init__(self, debug_mode: Optional[bool] = None) -> None:
+    def __init__(self, debug_mode: Optional[bool] = None, plaid_service: Optional[PlaidService] = None) -> None:
         """
         Initializes the Coinstack application.
 
         Args:
             debug_mode (Optional[bool]): If True, enables debug logging and features.
                 If None, falls back to the COINSTACK_DEBUG environment variable.
+            plaid_service (Optional[PlaidService]): Injected Plaid service instance.
+                If None, it will attempt to initialize from settings or fallback to simulator.
         """
         self.debug_mode = debug_mode if debug_mode is not None else settings.DEBUG_MODE
         self.version = "0.1.0"
@@ -34,7 +37,7 @@ class App:
 
         # Core components
         self.challenge_library = ChallengeLibrary()
-        self.bank_integration = BankIntegrationSimulator()
+        self.plaid_service = plaid_service
 
         # Default user for MVP
         self.current_user = UserProfile(
@@ -52,6 +55,27 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        if self.plaid_service is None and settings.PLAID_CLIENT_ID and settings.PLAID_SECRET:
+            try:
+                self.plaid_service = PlaidService(
+                    client_id=settings.PLAID_CLIENT_ID,
+                    secret=settings.PLAID_SECRET,
+                    environment=settings.PLAID_ENV
+                )
+                print(f"Plaid Service initialized in {settings.PLAID_ENV} mode.")
+            except Exception as e:
+                print(f"Failed to initialize Plaid Service: {e}")
+
+        # For MVP: If Plaid isn't available or fails, use the Simulator
+        if self.plaid_service and self.plaid_service.is_configured():
+            # In the future, we will have a real bank integration class here.
+            # For now, we still just use the simulator to represent the active component
+            # until transactions/get is implemented.
+            self.bank_integration = BankIntegrationSimulator()
+        else:
+            print("Using Bank Integration Simulator (Offline/Mock).")
+            self.bank_integration = BankIntegrationSimulator()
 
         self._initialized = True
         print("Coinstack App initialization complete.")
