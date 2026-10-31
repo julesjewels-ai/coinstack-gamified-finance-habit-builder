@@ -28,3 +28,14 @@ def test_app_debug_mode_override():
 
     app2 = App(debug_mode=False)
     assert app2.debug_mode is False
+
+def test_app_plaid_service_initialization():
+    app = App()
+    assert app.plaid_service is not None
+    assert app.plaid_service.client_id == settings.PLAID_CLIENT_ID
+
+    from src.services.plaid_service import PlaidService
+    custom_service = PlaidService(client_id="custom", secret="custom", env="sandbox")
+    app_custom = App(plaid_service=custom_service)
+    assert app_custom.plaid_service == custom_service
+    assert app_custom.plaid_service.client_id == "custom"
