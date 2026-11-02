@@ -8,6 +8,7 @@ from typing import Optional
 from src.core.models import UserProfile, BehavioralProfile
 from src.core.challenge_library import ChallengeLibrary
 from src.core.bank_integration import BankIntegrationSimulator
+from src.services.plaid_service import PlaidService
 from src.core.config import settings
 import random
 
@@ -20,13 +21,14 @@ class App:
     generating challenges, and tracking user progress.
     """
 
-    def __init__(self, debug_mode: Optional[bool] = None) -> None:
+    def __init__(self, debug_mode: Optional[bool] = None, plaid_service: Optional[PlaidService] = None) -> None:
         """
         Initializes the Coinstack application.
 
         Args:
             debug_mode (Optional[bool]): If True, enables debug logging and features.
                 If None, falls back to the COINSTACK_DEBUG environment variable.
+            plaid_service (Optional[PlaidService]): Injected Plaid service dependency.
         """
         self.debug_mode = debug_mode if debug_mode is not None else settings.DEBUG_MODE
         self.version = "0.1.0"
@@ -35,6 +37,7 @@ class App:
         # Core components
         self.challenge_library = ChallengeLibrary()
         self.bank_integration = BankIntegrationSimulator()
+        self.plaid_service = plaid_service
 
         # Default user for MVP
         self.current_user = UserProfile(
@@ -52,6 +55,15 @@ class App:
         print(f"Coinstack App (v{self.version}) initializing...")
         if self.debug_mode:
             print("Debug mode is ENABLED.")
+
+        if self.plaid_service is None and settings.PLAID_CLIENT_ID and settings.PLAID_SECRET:
+            self.plaid_service = PlaidService(
+                client_id=settings.PLAID_CLIENT_ID,
+                secret=settings.PLAID_SECRET,
+                env=settings.PLAID_ENV
+            )
+            if self.debug_mode:
+                print("Plaid service initialized from settings.")
 
         self._initialized = True
         print("Coinstack App initialization complete.")

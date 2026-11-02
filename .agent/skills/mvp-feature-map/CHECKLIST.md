@@ -10,7 +10,7 @@
   - *Accept*: DEBUG_MODE setting from .env is correctly reflected in App instance via `app.debug_mode`.
   - *Files*: `main.py`, `src/core/app.py`, `.env.example`, `requirements.txt`
 
-- [ ] **P0** — **Plaid API Client Integration**
+- [x] **P0** — **Plaid API Client Integration**
   - *What*: Integrate an official Plaid Python client into `src/core/app.py` or a new `src/services/plaid_service.py`. Implement initial client setup using environment variables for `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV`.
   - *Accept*: Plaid client can be initialized successfully.
   - *Accept*: Plaid client can connect to the specified Plaid environment (e.g., Sandbox).
