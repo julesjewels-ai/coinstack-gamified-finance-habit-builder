@@ -1,1 +1,16 @@
-# Python\n__pycache__/\n*.pyc\n*.pyo\n*.pyd\n.Python\nenv/\n.env/\n.venv/\nvenv/\npip-log.txt\npip-delete-this-arg.txt\n.tox/\n.coverage\n.coverage.*\n.cache\nnosetests.xml\ncoverage.xml\nhtmlcov/\n.pytest_cache/\n\n# IDEs\n.idea/\n*.iml\n*.iws\n*.ipr\n.vscode/\n\n# Environment variables\n.env\n
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest
+.pytest_cache/
